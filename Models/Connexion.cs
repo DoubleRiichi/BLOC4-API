@@ -2,7 +2,7 @@
 {
     public class Connexion
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public required string Password { get; set; }
     }
 }
