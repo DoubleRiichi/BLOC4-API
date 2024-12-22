@@ -1,11 +1,16 @@
+using BLOC4_API;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using System; 
 
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Services.AddDbContext<BLOC4db>(options =>
+    options.UseMySql(builder.Configuration.GetConnectionString("DefaultConnection"),
+    new MySqlServerVersion(new Version(8, 0, 21))));
 
+// Add services to the container.
 builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
@@ -22,7 +27,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/V0.1/swagger.json", "BLOC4-API V0.1");
+        c.SwaggerEndpoint("/swagger/v0.1/swagger.json", "BLOC4-API V0.1");
     });
 }
 

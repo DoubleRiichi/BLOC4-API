@@ -2,7 +2,7 @@
 {
     public class Sites
     {
-        public int Id { get; set; }
+        public int? Id { get; set; }
         public required string Nom { get; set; }
     }
 }
