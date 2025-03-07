@@ -23,10 +23,10 @@ namespace BLOC4_API.Controllers
         {
             var rows = from salarie in _context.Salaries
                        join service in _context.Services
-                            on salarie.Services_id equals service.Id into serviceGroup
+                       on salarie.Services_id equals service.Id into serviceGroup
                        from service in serviceGroup.DefaultIfEmpty()
                        join site in _context.Sites
-                       on salarie.Sites_id equals site.Id into siteGroup
+                       on service.Sites_id equals site.Id into siteGroup
                        from site in siteGroup.DefaultIfEmpty()
                        select new
                        {
@@ -36,8 +36,14 @@ namespace BLOC4_API.Controllers
                            salarie.Telephone_fixe,
                            salarie.Telephone_mobile,
                            salarie.Email,
-                           service,
-                           site
+                           service = new {
+                            service.Id, 
+                            service.Nom,
+                            site = new {
+                                site.Id,
+                                site.Nom,
+                            }
+                           },
                        };
 
             if (rows.Any())
@@ -55,11 +61,7 @@ namespace BLOC4_API.Controllers
             var row = from salarie in _context.Salaries
                       where salarie.Id == id
                       join service in _context.Services
-                           on salarie.Services_id equals service.Id into serviceGroup
-                      from service in serviceGroup.DefaultIfEmpty()
-                      join site in _context.Sites
-                      on salarie.Sites_id equals site.Id into siteGroup
-                      from site in siteGroup.DefaultIfEmpty()
+                      on salarie.Services_id equals service.Id
                       select new
                       {
                           salarie.Id,
@@ -69,7 +71,6 @@ namespace BLOC4_API.Controllers
                           salarie.Telephone_mobile,
                           salarie.Email,
                           service,
-                          site
                       };
 
             if (row != null)
@@ -82,19 +83,24 @@ namespace BLOC4_API.Controllers
 
         [HttpPost]
         [Route("create")]
-        public IActionResult Create([FromBody] Salaries salarie)
+        public IActionResult Create([FromBody] SalariesRequest salarieRequest)
         {
+            var auth = _context.Connexion.Where(x => x.Token == salarieRequest.token).FirstOrDefault();
+
+            if (auth == null) {
+                return Unauthorized();
+            }                        
             // since id is autoincrement, we shouldn't accept a post request with an user given id
-            if (salarie == null || salarie.Id != null)
+            if (salarieRequest == null || salarieRequest.salaries.Id != null || salarieRequest.salaries.Services_id == null)
             {
                 return BadRequest();
             }
 
             try
             {
-                _context.Salaries.Add(salarie);
+                _context.Salaries.Add(salarieRequest.salaries);
                 _context.SaveChanges();
-                return CreatedAtAction(nameof(Create), new { id = salarie.Id }, salarie);
+                return CreatedAtAction(nameof(Create), new { id = salarieRequest.salaries.Id }, salarieRequest);
             }
             catch (Exception ex)
             {
@@ -106,26 +112,31 @@ namespace BLOC4_API.Controllers
 
         [HttpPut]
         [Route("update")]
-        public IActionResult Update([FromBody] Salaries salarie)
+        public IActionResult Update([FromBody] SalariesRequest salarieRequest)
         {
-            if (salarie == null || salarie.Id == null)
+            var auth = _context.Connexion.Where(x => x.Token == salarieRequest.token).FirstOrDefault();
+
+            if (auth == null) {
+                return Unauthorized();
+            }          
+                          
+            if (salarieRequest == null || salarieRequest.salaries.Id == null || salarieRequest.salaries.Services_id == null)
             {
                 return BadRequest();
             }
 
-            var existingSalarie = _context.Salaries.Find(salarie.Id);
+            var existingSalarie = _context.Salaries.Find(salarieRequest.salaries.Id);
             if (existingSalarie == null)
             {
                 return NotFound();
             }
 
-            existingSalarie.Prenom = salarie.Prenom;
-            existingSalarie.Nom = salarie.Nom;
-            existingSalarie.Telephone_fixe = salarie.Telephone_fixe;
-            existingSalarie.Telephone_mobile = salarie.Telephone_mobile;
-            existingSalarie.Email = salarie.Email;
-            existingSalarie.Services_id = salarie.Services_id;
-            existingSalarie.Sites_id = salarie.Sites_id;
+            existingSalarie.Prenom = salarieRequest.salaries.Prenom;
+            existingSalarie.Nom = salarieRequest.salaries.Nom;
+            existingSalarie.Telephone_fixe = salarieRequest.salaries.Telephone_fixe;
+            existingSalarie.Telephone_mobile = salarieRequest.salaries.Telephone_mobile;
+            existingSalarie.Email = salarieRequest.salaries.Email;
+            existingSalarie.Services_id = salarieRequest.salaries.Services_id;
 
 
             try
@@ -155,7 +166,7 @@ namespace BLOC4_API.Controllers
             {
                 _context.Salaries.Remove(salarie);
                 _context.SaveChanges();
-                return Ok();
+                return Ok(new {error = "Ok"});
             }
             catch (Exception ex)
             {

@@ -2,7 +2,8 @@
 {
     using Microsoft.EntityFrameworkCore;
     using BLOC4_API.Models;
-
+    //Précise des informations sur la base de données utilisée, notamment ses tables. 
+    //Utilisé par Entity Framework pour implémenter les fonctionalités ORM (object relational mapping)
     public class BLOC4db : DbContext
     {
         public BLOC4db(DbContextOptions<BLOC4db> options) : base(options) { }

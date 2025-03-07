@@ -22,6 +22,7 @@ namespace BLOC4_API.Controllers
         public ActionResult Get()
         {
             var rows = _context.Sites.ToList();
+            
 
             if (rows.Any())
             {
@@ -47,19 +48,25 @@ namespace BLOC4_API.Controllers
 
         [HttpPost]
         [Route("create")]
-        public IActionResult Create([FromBody] Sites site)
+        public IActionResult Create([FromBody] SitesRequest siteRequest)
         {
+            var auth = _context.Connexion.Where(x => x.Token == siteRequest.token).FirstOrDefault();
+
+            if (auth == null) {
+                return Unauthorized();
+            }
+
             // since id is autoincrement, we shouldn't accept a post request with an user given id
-            if (site == null || site.Id != null)
+            if (siteRequest == null || siteRequest.site.Id != null)
             {
                 return BadRequest();
             }
 
             try
             {
-                _context.Sites.Add(site);
+                _context.Sites.Add(siteRequest.site);
                 _context.SaveChanges();
-                return CreatedAtAction(nameof(Create), new { id = site.Id }, site);
+                return CreatedAtAction(nameof(Create), new { id = siteRequest.site.Id }, siteRequest.site);
             }
             catch (Exception ex)
             {
@@ -71,20 +78,27 @@ namespace BLOC4_API.Controllers
 
         [HttpPut]
         [Route("update")]
-        public IActionResult Update([FromBody] Sites site)
+        public IActionResult Update([FromBody] SitesRequest siteRequest)
         {
-            if (site == null || site.Id == null)
+            var auth = _context.Connexion.Where(x => x.Token == siteRequest.token).FirstOrDefault();
+
+            if (auth == null) {
+                return Unauthorized();
+            }
+
+            
+            if (siteRequest == null || siteRequest.site.Id == null)
             {
                 return BadRequest();
             }
 
-            var existingSite = _context.Sites.Find(site.Id);
+            var existingSite = _context.Sites.Find(siteRequest.site.Id);
             if (existingSite == null)
             {
                 return NotFound();
             }
 
-            existingSite.Nom = site.Nom;
+            existingSite.Nom = siteRequest.site.Nom;
 
 
             try

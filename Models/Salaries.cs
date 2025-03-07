@@ -9,6 +9,5 @@
         public required string Telephone_mobile { get; set; }
         public required string Email { get; set; }
         public required int? Services_id { get; set; } 
-        public required int? Sites_id { get; set; }
     }
 }
