@@ -21,11 +21,20 @@ namespace BLOC4_API.Controllers
         [Route("get")]
         public ActionResult Get()
         {
-            var rows = _context.Services.ToList();
+            // var rows = _context.Services.ToList();
+            var data = from services in _context.Services
+                       join site in _context.Sites
+                       on services.Sites_id equals site.Id
+                       select new {
+                        services.Id,
+                        services.Nom,
+                        site
+                       };
+                    
 
-            if(rows.Any())
+            if(data.Any())
             {
-                return Ok(rows);
+                return Ok(data);
             }
 
             return NotFound();
@@ -35,11 +44,20 @@ namespace BLOC4_API.Controllers
         [Route("find/{id}")]
         public ActionResult Find(int id)
         {
-            var row = _context.Services.Find(id);
+            var data = from services in _context.Services
+                       where services.Id == id
+                       join site in _context.Sites
+                       on services.Sites_id equals site.Id
+                       select new {
+                        services.Id,
+                        services.Nom,
+                        site
+                       };
+                    
 
-            if (row != null)
+            if(data.Any())
             {
-                return Ok(row);
+                return Ok(data);
             }
 
             return NotFound();
@@ -47,19 +65,24 @@ namespace BLOC4_API.Controllers
 
         [HttpPost]
         [Route("create")]
-        public IActionResult Create([FromBody] Services service)
+        public IActionResult Create([FromBody] ServicesRequest serviceRequest)
         {
+            var auth = _context.Connexion.Where(x => x.Token == serviceRequest.token).FirstOrDefault();
+
+            if (auth == null) {
+                return Unauthorized();
+            }            
             // since id is autoincrement, we shouldn't accept a post request with an user given id
-            if (service == null || service.Id != null)
+            if (serviceRequest == null || serviceRequest.services.Id != null)
             {
                 return BadRequest();
             }
 
             try
             {
-                _context.Services.Add(service);
+                _context.Services.Add(serviceRequest.services);
                 _context.SaveChanges();
-                return CreatedAtAction(nameof(Create), new { id = service.Id }, service);
+                return CreatedAtAction(nameof(Create), new { id = serviceRequest.services.Id }, serviceRequest.services);
             }
             catch (Exception ex)
             {
@@ -71,20 +94,27 @@ namespace BLOC4_API.Controllers
 
         [HttpPut]
         [Route("update")]
-        public IActionResult Update([FromBody] Services service)
+        public IActionResult Update([FromBody] ServicesRequest serviceRequest)
         {
-            if (service == null || service.Id == null)
+            var auth = _context.Connexion.Where(x => x.Token == serviceRequest.token).FirstOrDefault();
+
+            if (auth == null) {
+                return Unauthorized();
+            }            
+                        
+            if (serviceRequest == null || serviceRequest.services.Id == null  )
             {
                 return BadRequest();
             }
 
-            var existingService = _context.Services.Find(service.Id);
+            var existingService = _context.Services.Find(serviceRequest.services.Id);
             if (existingService == null)
             {
                 return NotFound();
             }
 
-            existingService.Nom = service.Nom;
+            existingService.Nom = serviceRequest.services.Nom;
+            existingService.Sites_id = serviceRequest.services.Sites_id;
         
 
             try
