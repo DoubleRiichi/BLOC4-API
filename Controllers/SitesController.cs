@@ -17,6 +17,9 @@ namespace BLOC4_API.Controllers
             _context = context;
         }
 
+        // Récupère l'ensemble des Sites 
+        // @Return: 200 Ok et Liste Sites
+        // @Return: 404 NotFound
         [HttpGet]
         [Route("get")]
         public ActionResult Get()
@@ -32,6 +35,10 @@ namespace BLOC4_API.Controllers
             return NotFound();
         }
 
+
+        // Récupère un des Sites par son ID 
+        // @Return: 200 Ok et un objet Sites
+        // @Return: 404 NotFound
         [HttpGet]
         [Route("find/{id}")]
         public ActionResult Find(int id)
@@ -46,6 +53,11 @@ namespace BLOC4_API.Controllers
             return NotFound();
         }
 
+        // Créer un nouveau Sites dans la base de donnée suivant un objet Sites passé dans la requête avec un Token valide (voir SitesRequest)
+        // @Return Unauthorized si token invalide 
+        // @Return BadRequest
+        // @Return InternalServerError on exception
+        // @Return 200 Ok et le nouveau Sites
         [HttpPost]
         [Route("create")]
         public IActionResult Create([FromBody] SitesRequest siteRequest)
@@ -76,6 +88,11 @@ namespace BLOC4_API.Controllers
 
         }
 
+        // Modifie un Sites dans la base de donnée suivant un objet Sites passé dans la requête avec un Token valide (voir SitesRequest)
+        // @Return Unauthorized si token invalide 
+        // @Return BadRequest
+        // @Return InternalServerError on exception
+        // @Return 200 Ok et le Sites modifié
         [HttpPut]
         [Route("update")]
         public IActionResult Update([FromBody] SitesRequest siteRequest)
@@ -114,6 +131,11 @@ namespace BLOC4_API.Controllers
 
         }
 
+        // Supprime un Sites dans la base de donnée suivant un objet Sites passé dans la requête avec un Token valide (voir SitesRequest)
+        // @Return Unauthorized si token invalide 
+        // @Return BadRequest
+        // @Return InternalServerError on exception
+        // @Return 200 Ok
         [HttpDelete]
         [Route("delete/{id}")]
         public IActionResult Delete(int id)

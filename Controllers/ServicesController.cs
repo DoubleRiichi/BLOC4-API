@@ -17,6 +17,9 @@ namespace BLOC4_API.Controllers
             _context = context;
         }
 
+        // Récupère l'ensemble des Services du Site lié
+        // @Return: 200 Ok et Liste Salariés
+        // @Return: 404 NotFound
         [HttpGet]
         [Route("get")]
         public ActionResult Get()
@@ -40,6 +43,9 @@ namespace BLOC4_API.Controllers
             return NotFound();
         }
 
+        // Récupère un des Services par son ID et le Site qui lui est associé
+        // @Return: 200 Ok et un objet Services
+        // @Return: 404 NotFound
         [HttpGet]
         [Route("find/{id}")]
         public ActionResult Find(int id)
@@ -63,6 +69,11 @@ namespace BLOC4_API.Controllers
             return NotFound();
         }
 
+        // Créer un nouveau Service dans la base de donnée suivant un objet Service passé dans la requête avec un Token valide (voir ServicesRequest)
+        // @Return Unauthorized si token invalide 
+        // @Return BadRequest
+        // @Return InternalServerError on exception
+        // @Return 200 Ok et le nouveau salarié
         [HttpPost]
         [Route("create")]
         public IActionResult Create([FromBody] ServicesRequest serviceRequest)
@@ -92,6 +103,11 @@ namespace BLOC4_API.Controllers
 
         }
 
+        // Modifie un Service dans la base de donnée suivant un objet Service passé dans la requête avec un Token valide (voir ServiceRequest)
+        // @Return Unauthorized si token invalide 
+        // @Return BadRequest
+        // @Return InternalServerError on exception
+        // @Return 200 Ok et le service modifié
         [HttpPut]
         [Route("update")]
         public IActionResult Update([FromBody] ServicesRequest serviceRequest)
@@ -130,6 +146,11 @@ namespace BLOC4_API.Controllers
 
         }
 
+        // Supprime un Service dans la base de donnée suivant un id passé dans la requête avec un Token valide (voir ServiceRequest)
+        // @Return Unauthorized si token invalide 
+        // @Return BadRequest
+        // @Return InternalServerError on exception
+        // @Return 200 Ok
         [HttpDelete]
         [Route("delete/{id}")]
         public IActionResult Delete(int id)

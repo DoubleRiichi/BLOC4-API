@@ -16,7 +16,11 @@ namespace BLOC4_API.Controllers
         {
             _context = context;
         }
+        
 
+        // Récupère l'ensemble des Salariés et les objets Sites et Services liés
+        // @Return: 200 Ok et Liste Salariés
+        // @Return: 404 NotFound
         [HttpGet]
         [Route("get")]
         public ActionResult Get()
@@ -53,7 +57,9 @@ namespace BLOC4_API.Controllers
 
             return NotFound();
         }
-
+        // Récupère un des Salariés par son ID et le Site et Service qui lui est associé
+        // @Return: 200 Ok et un objet Salarié
+        // @Return: 404 NotFound
         [HttpGet]
         [Route("find/{id}")]
         public ActionResult Find(int id)
@@ -81,6 +87,12 @@ namespace BLOC4_API.Controllers
             return NotFound();
         }
 
+
+        // Créer un nouveau Salarié dans la base de donnée suivant un objet Salarié passé dans la requête avec un Token valide (voir SalariesRequest)
+        // @Return Unauthorized si token invalide 
+        // @Return BadRequest
+        // @Return InternalServerError on exception
+        // @Return 200 Ok et le nouveau salarié
         [HttpPost]
         [Route("create")]
         public IActionResult Create([FromBody] SalariesRequest salarieRequest)
@@ -90,7 +102,7 @@ namespace BLOC4_API.Controllers
             if (auth == null) {
                 return Unauthorized();
             }                        
-            // since id is autoincrement, we shouldn't accept a post request with an user given id
+           
             if (salarieRequest == null || salarieRequest.salaries.Id != null || salarieRequest.salaries.Services_id == null)
             {
                 return BadRequest();
@@ -110,6 +122,11 @@ namespace BLOC4_API.Controllers
 
         }
 
+        // Modifie un Salarié dans la base de donnée suivant un objet Salarié passé dans la requête avec un Token valide (voir SalariesRequest)
+        // @Return Unauthorized si token invalide 
+        // @Return BadRequest
+        // @Return InternalServerError on exception
+        // @Return 200 Ok et le salarié modifié
         [HttpPut]
         [Route("update")]
         public IActionResult Update([FromBody] SalariesRequest salarieRequest)
@@ -151,7 +168,11 @@ namespace BLOC4_API.Controllers
             }
 
         }
-
+        // Supprime un Salarié dans la base de donnée suivant un id passé dans la requête avec un Token valide (voir SalariesRequest)
+        // @Return Unauthorized si token invalide 
+        // @Return BadRequest
+        // @Return InternalServerError on exception
+        // @Return 200 Ok
         [HttpDelete]
         [Route("delete/{id}")]
         public IActionResult Delete(int id)

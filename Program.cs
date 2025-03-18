@@ -21,14 +21,13 @@ builder.Services.AddSwaggerGen(c =>
 var app = builder.Build();
 
 
-if (app.Environment.IsDevelopment())
+
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("/swagger/v0.1/swagger.json", "BLOC4-API V0.1");
-    });
-}
+    c.SwaggerEndpoint("/swagger/v0.1/swagger.json", "BLOC4-API V0.1");
+});
+
 
 // Configure the HTTP request pipeline.
 
