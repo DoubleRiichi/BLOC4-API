@@ -12,9 +12,9 @@ Les routes POST/UPDATE/DELETE nécessitent un Token pour être utilisées, un no
 
 ## Procédure d'installation
 Prérequis :
-	- MySQL/MariaDB installé et lancés
-	- Runtime compatible DotNet 8.0
-	- Extracteur d'archive compatible avec .7z
+- MySQL/MariaDB installé et lancés
+- Runtime compatible DotNet 8.0
+- Extracteur d'archive compatible avec .7z
 
 
 	
@@ -25,7 +25,7 @@ Depuis ce dépot, dans l'onglet Release, télécharger l'archive 7z "BLOC4-API-v
 Extraire l'archive .7z à l'emplacement de votre choix.
 
 #### 3. Importer la base de donnée MYSQL 
-En utilisant le terminal ou votre logiciel de gestion de base de données, importer le schéma *bloc4db.sql**.
+En utilisant le terminal ou votre logiciel de gestion de base de données, importer le schéma *bloc4db.sql*.
 
 Le port par défaut est le port **5290**, il peut être changé depuis le fichier *appsettings.Production.json* 
 
