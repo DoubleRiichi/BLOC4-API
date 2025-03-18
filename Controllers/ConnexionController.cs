@@ -18,6 +18,13 @@ namespace BLOC4_API.Controllers
             _context = context;
         }
 
+
+        //Authentifie une instance de client lourd grâce à un objet Connexion (voir models)
+        //Vérifie le mot de passe encrypté avec BCrypt, et génère un nouveau token valable pour la durée de la session
+        //Le token est nécessaire pour utiliser les routes POST/UPDATE/CREATE
+        //@Return 404 NotFound 
+        //@Return 200 Ok (User)
+        //@Return 500 InternalServerError on exception
         [HttpPost]
         [Route("login")]
         public IActionResult Login([FromBody] Connexion connexion)
@@ -59,7 +66,11 @@ namespace BLOC4_API.Controllers
 
         }
 
-
+        //Déconnecte une instance de client lourd grâce à un objet Connexion (voir models)
+        //Le champs token de du client lourd passe à NULL
+        //@Return 404 NotFound 
+        //@Return 200 Ok (User)
+        //@Return 500 InternalServerError on exception
         [HttpPost]
         [Route("logout")]
         public IActionResult Logout([FromBody] Connexion connexion)
@@ -86,7 +97,11 @@ namespace BLOC4_API.Controllers
 
         }
 
-
+        //Créer une nouvelle instance de client lourd à partir d'un mot de passe
+        //à Désactiver en production!
+        //@Return 404 NotFound 
+        //@Return 200 Ok ()
+        //@Return 500 InternalServerError on exception
         [HttpPost]
         [Route("create")]
         public IActionResult Create([FromBody] string password)
